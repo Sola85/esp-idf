@@ -94,12 +94,12 @@ static bool s_app_cpu_startup_idle_hook_cb(void)
 static void main_task(void* args)
 {
 #if !CONFIG_FREERTOS_UNICORE
-    // Wait for FreeRTOS initialization to finish on APP CPU, before replacing its startup stack
-    esp_register_freertos_idle_hook_for_cpu(s_app_cpu_startup_idle_hook_cb, 1);
+    // Wait for FreeRTOS initialization to finish on other core, before replacing its startup stack
+    esp_register_freertos_idle_hook_for_cpu(s_app_cpu_startup_idle_hook_cb, !xPortGetCoreID());
     while (!s_app_cpu_startup_done) {
         ;
     }
-    esp_deregister_freertos_idle_hook_for_cpu(s_app_cpu_startup_idle_hook_cb, 1);
+    esp_deregister_freertos_idle_hook_for_cpu(s_app_cpu_startup_idle_hook_cb, !xPortGetCoreID());
 #endif
 
     // [refactor-todo] check if there is a way to move the following block to esp_system startup
