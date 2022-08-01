@@ -105,6 +105,11 @@ typedef struct {
     uint8_t subclass;                                /*!< HID device subclass */
     uint8_t *desc_list;                              /*!< HID descriptor list */
     int desc_list_len;                               /*!< size in bytes of HID descriptor list */
+
+    // Adafruit modification by hathach
+    uint16_t vendor_id;
+    uint16_t product_id;
+    uint16_t version;
 } esp_hidd_app_param_t;
 
 /**

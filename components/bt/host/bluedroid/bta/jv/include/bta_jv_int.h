@@ -76,7 +76,8 @@ enum {
 };
 
 #ifndef BTA_JV_RFC_EV_MASK
-#define BTA_JV_RFC_EV_MASK (PORT_EV_RXCHAR | PORT_EV_TXEMPTY | PORT_EV_FC | PORT_EV_FCS)
+#define BTA_JV_RFC_EV_MASK (PORT_EV_RXCHAR | PORT_EV_TXEMPTY | PORT_EV_FC | PORT_EV_FCS | \
+                            PORT_EV_DSR | PORT_EV_CTS | PORT_EV_RING | PORT_EV_RLSD /* hathach */ )
 #endif
 
 /* data type for BTA_JV_API_ENABLE_EVT */

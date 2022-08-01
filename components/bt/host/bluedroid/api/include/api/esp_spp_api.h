@@ -79,6 +79,10 @@ typedef enum {
     ESP_SPP_SRV_STOP_EVT                = 35,               /*!< When SPP server stopped, the event comes */
     ESP_SPP_VFS_REGISTER_EVT            = 36,               /*!< When SPP VFS register, the event comes */
     ESP_SPP_VFS_UNREGISTER_EVT          = 37,               /*!< When SPP VFS unregister, the event comes */
+
+    // Adafruit EZ-Link
+    ESP_SPP_CONTROL_IND_EVT             = 100,
+    ESP_SPP_PORTNEG_IND_EVT             = 101,
 } esp_spp_cb_event_t;
 
 
@@ -211,6 +215,21 @@ typedef union {
     struct spp_vfs_unregister_evt_param {
         esp_spp_status_t    status;         /*!< status */
     } vfs_unregister;                       /*!< SPP callback param of ESP_SPP_VFS_UNREGISTER_EVT */
+
+    /* hathach */
+    struct spp_control_ind_evt_param {
+        esp_spp_status_t    status;         /*!< status */
+        uint32_t            handle;         /*!< The connection handle */
+        uint8_t             modem_signal_change;
+        uint8_t             modem_signal;
+    } control_ind;
+
+    struct spp_portneg_ind_evt_param {
+        esp_spp_status_t    status;         /*!< status */
+        uint32_t            handle;         /*!< The connection handle */
+        uint8_t             port_state[9]; // following tPORT_STATE layout
+    } portneg_ind;
+
 } esp_spp_cb_param_t;                       /*!< SPP callback parameter union type */
 
 /**

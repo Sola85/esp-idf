@@ -2067,6 +2067,43 @@ static void bta_jv_port_event_sr_cback(UINT32 code, UINT16 port_handle)
         p_cb->p_cback(BTA_JV_RFCOMM_CONG_EVT, &evt_data, user_data);
     }
 
+    if (code & (PORT_EV_DSR | PORT_EV_CTS | PORT_EV_RING | PORT_EV_RLSD | PORT_EV_BREAK)) {
+        evt_data.rfc_control_ind.status = BTA_JV_SUCCESS;
+        evt_data.rfc_control_ind.handle = p_pcb->handle;
+
+        UINT8 changed_signals = 0;
+        if ( code & PORT_EV_DSR ) changed_signals |= PORT_DTRDSR_ON;
+        if ( code & PORT_EV_CTS ) changed_signals |= PORT_CTSRTS_ON;
+
+        if ( code & PORT_EV_RING ) changed_signals |= PORT_RING_ON;
+        if ( code & PORT_EV_RLSD ) changed_signals |= PORT_DCD_ON;
+
+        evt_data.rfc_control_ind.modem_signal_change = changed_signals;
+        PORT_GetModemStatus(port_handle, &evt_data.rfc_control_ind.modem_signal);
+
+        p_cb->p_cback(BTA_JV_RFCOMM_CONTROL_IND_EVT, &evt_data, user_data);
+    }
+
+    if (code & PORT_EV_PORTNEG) {
+        tPORT_STATE port_state;
+        PORT_GetPeerState(port_handle, &port_state);
+
+        evt_data.rfc_portneg_ind.status = BTA_JV_SUCCESS;
+        evt_data.rfc_portneg_ind.handle = p_pcb->handle;
+
+        evt_data.rfc_portneg_ind.port_state[0] = port_state.baud_rate;
+        evt_data.rfc_portneg_ind.port_state[1] = port_state.byte_size;
+        evt_data.rfc_portneg_ind.port_state[2] = port_state.stop_bits;
+        evt_data.rfc_portneg_ind.port_state[3] = port_state.parity;
+        evt_data.rfc_portneg_ind.port_state[4] = port_state.parity_type;
+        evt_data.rfc_portneg_ind.port_state[5] = port_state.fc_type;
+        evt_data.rfc_portneg_ind.port_state[6] = port_state.rx_char1;
+        evt_data.rfc_portneg_ind.port_state[7] = port_state.xon_char;
+        evt_data.rfc_portneg_ind.port_state[8] = port_state.xoff_char;
+
+        p_cb->p_cback(BTA_JV_RFCOMM_PORTNEG_IND_EVT, &evt_data, user_data);
+    }
+
     if (code & PORT_EV_TXEMPTY) {
         bta_jv_pm_conn_idle(p_pcb->p_pm_cb);
     }

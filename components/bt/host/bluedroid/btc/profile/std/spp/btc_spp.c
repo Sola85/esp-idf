@@ -1290,6 +1290,27 @@ void btc_spp_cb_handler(btc_msg_t *msg)
 #endif
         btc_spp_cb_to_app(ESP_SPP_UNINIT_EVT, &param);
         break;
+
+    case BTA_JV_RFCOMM_CONTROL_IND_EVT:
+        if (spp_local_param.spp_mode == ESP_SPP_MODE_CB) {
+            param.control_ind.status = p_data->rfc_control_ind.status;
+            param.control_ind.handle = p_data->rfc_control_ind.handle;
+            param.control_ind.modem_signal_change = p_data->rfc_control_ind.modem_signal_change;
+            param.control_ind.modem_signal = p_data->rfc_control_ind.modem_signal;
+            btc_spp_cb_to_app(ESP_SPP_CONTROL_IND_EVT, &param);
+        }
+        break;
+
+    case BTA_JV_RFCOMM_PORTNEG_IND_EVT:
+        if (spp_local_param.spp_mode == ESP_SPP_MODE_CB) {
+            param.portneg_ind.status = p_data->rfc_portneg_ind.status;
+            param.portneg_ind.handle = p_data->rfc_portneg_ind.handle;
+            memcpy(param.portneg_ind.port_state, p_data->rfc_portneg_ind.port_state, sizeof(param.portneg_ind.port_state));
+
+            btc_spp_cb_to_app(ESP_SPP_PORTNEG_IND_EVT, &param);
+        }
+        break;
+
     default:
         BTC_TRACE_DEBUG("%s: Unhandled event (%d)!", __FUNCTION__, msg->act);
         break;

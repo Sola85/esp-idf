@@ -550,6 +550,7 @@
 #endif
 
 #ifndef BT_TRACE_VERBOSE
+// #define BT_TRACE_VERBOSE  TRUE
 #define BT_TRACE_VERBOSE  FALSE
 #endif
 
@@ -1476,7 +1477,7 @@
 #endif
 
 #ifndef SDP_MAX_PAD_LEN
-#define SDP_MAX_PAD_LEN             300
+#define SDP_MAX_PAD_LEN             500
 #endif
 
 /* The maximum length, in bytes, of an attribute. */
