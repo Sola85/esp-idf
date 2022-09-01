@@ -470,7 +470,7 @@ static void btc_hd_disconnect(void)
  ******************************************************************************/
 static void btc_hd_send_report(esp_hidd_report_type_t type, uint8_t id, uint16_t len, uint8_t *p_data)
 {
-    tBTA_HD_REPORT report;
+    tBTA_HD_REPORT report = { 0 };
 
     BTC_TRACE_API("%s: type=%d id=%d len=%d", __func__, type, id, len);
     esp_hidd_status_t ret = ESP_HIDD_SUCCESS;
