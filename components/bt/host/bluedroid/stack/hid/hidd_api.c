@@ -218,6 +218,7 @@ tHID_STATUS HID_DevAddRecord(uint32_t handle, char *p_name, char *p_description,
     bool result = TRUE;
 
     HIDD_TRACE_API("%s", __func__);
+    HIDD_TRACE_API("desc_len = %d, p_desc_data = %02x %02X %02X %02X", desc_len, p_desc_data[0], p_desc_data[1], p_desc_data[2], p_desc_data[3]);
 
     // Service Class ID List
     if (result) {
@@ -294,20 +295,39 @@ tHID_STATUS HID_DevAddRecord(uint32_t handle, char *p_name, char *p_description,
         {
             static uint8_t cdt = 0x22;
             uint8_t *p_buf;
-            uint8_t seq_len = 4 + desc_len;
+            uint16_t seq_len = 4 + desc_len + (desc_len > 255 ? 1 : 0);
+
             p_buf = (uint8_t *)osi_malloc(2048);
             if (p_buf == NULL) {
                 HIDD_TRACE_ERROR("%s: Buffer allocation failure for size = 2048 ", __func__);
                 return HID_ERR_NOT_REGISTERED;
             }
             p = p_buf;
-            UINT8_TO_BE_STREAM(p, (DATA_ELE_SEQ_DESC_TYPE << 3) | SIZE_IN_NEXT_BYTE);
-            UINT8_TO_BE_STREAM(p, seq_len);
+
+            if (seq_len <= 255)
+            {
+              UINT8_TO_BE_STREAM(p, (DATA_ELE_SEQ_DESC_TYPE << 3) | SIZE_IN_NEXT_BYTE);
+              UINT8_TO_BE_STREAM(p, seq_len);
+            }else
+            {
+              UINT8_TO_BE_STREAM(p, (DATA_ELE_SEQ_DESC_TYPE << 3) | SIZE_IN_NEXT_WORD);
+              UINT16_TO_BE_STREAM(p, seq_len);
+            }
+
             UINT8_TO_BE_STREAM(p, (UINT_DESC_TYPE << 3) | SIZE_ONE_BYTE);
             UINT8_TO_BE_STREAM(p, cdt);
-            UINT8_TO_BE_STREAM(p, (TEXT_STR_DESC_TYPE << 3) | SIZE_IN_NEXT_BYTE);
-            UINT8_TO_BE_STREAM(p, desc_len);
+
+            if (desc_len <= 255)
+            {
+              UINT8_TO_BE_STREAM(p, (TEXT_STR_DESC_TYPE << 3) | SIZE_IN_NEXT_BYTE);
+              UINT8_TO_BE_STREAM(p, desc_len);
+            }else
+            {
+              UINT8_TO_BE_STREAM(p, (TEXT_STR_DESC_TYPE << 3) | SIZE_IN_NEXT_WORD);
+              UINT16_TO_BE_STREAM(p, desc_len);
+            }
             ARRAY_TO_BE_STREAM(p, p_desc_data, (int)desc_len);
+
             result &= SDP_AddAttribute(handle, ATTR_ID_HID_DESCRIPTOR_LIST, DATA_ELE_SEQ_DESC_TYPE, p - p_buf, p_buf);
             osi_free(p_buf);
         }
