@@ -416,6 +416,7 @@ BOOLEAN SDP_AddAttribute (UINT32 handle, UINT16 attr_id, UINT8 attr_type,
                 (attr_type == UUID_DESC_TYPE) ||
                 (attr_type == DATA_ELE_SEQ_DESC_TYPE) ||
                 (attr_type == DATA_ELE_ALT_DESC_TYPE)) {
+#if 0
             UINT8 num_array[400];
             UINT32 i;
             UINT32 len = (attr_len > 200) ? 200 : attr_len;
@@ -426,6 +427,16 @@ BOOLEAN SDP_AddAttribute (UINT32 handle, UINT16 attr_id, UINT8 attr_type,
             }
             SDP_TRACE_DEBUG("SDP_AddAttribute: handle:%X, id:%04X, type:%d, len:%d, p_val:%p, *p_val:%s\n",
                             handle, attr_id, attr_type, attr_len, p_val, num_array);
+#else
+            SDP_TRACE_DEBUG("SDP_AddAttribute: handle:%X, id:%04X, type:%d, len:%d, p_val:%p, *p_val:",
+                            handle, attr_id, attr_type, attr_len, p_val);
+            for(int i=0; i<attr_len; i++)
+            {
+              if (i && i%16==0) printf("\n");
+              printf("%02X ", p_val[i]);
+            }
+            printf("\n");
+#endif
         } else if (attr_type == BOOLEAN_DESC_TYPE) {
             SDP_TRACE_DEBUG("SDP_AddAttribute: handle:%X, id:%04X, type:%d, len:%d, p_val:%p, *p_val:%d\n",
                             handle, attr_id, attr_type, attr_len, p_val, *p_val);
