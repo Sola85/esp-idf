@@ -91,6 +91,11 @@ typedef struct {
     uint8_t subclass;
     uint8_t *desc_list;
     int desc_list_len;
+
+    // Adafruit modification by hathach
+    uint16_t vendor_id;
+    uint16_t product_id;
+    uint16_t version;
 } esp_hidd_app_param_t;
 
 /**

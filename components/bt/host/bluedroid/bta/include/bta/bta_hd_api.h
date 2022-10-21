@@ -70,6 +70,11 @@ typedef struct {
     char *p_provider;
     uint8_t subclass;
     tBTA_HD_DEV_DESCR descriptor;
+
+    // Adafruit modification by hathach
+    uint16_t vendor_id;
+    uint16_t product_id;
+    uint16_t version;
 } tBTA_HD_APP_INFO;
 
 typedef struct {

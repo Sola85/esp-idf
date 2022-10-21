@@ -175,6 +175,19 @@ void bta_hd_register_act(tBTA_HD_DATA *p_data)
                      p_app_data->subclass, p_app_data->d_len, p_app_data->d_data);
     bta_sys_add_uuid(UUID_SERVCLASS_HUMAN_INTERFACE);
 
+    tBTA_DI_RECORD di_record =
+    {
+      .vendor           = p_app_data->vendor_id,
+      .vendor_id_source = 0x0002,                 // assigned by USB-IF
+      .product          = p_app_data->product_id,
+      .version          = p_app_data->version,
+      .primary_record   = TRUE
+    };
+
+    UINT32 temp32;
+    BTA_DmSetLocalDiRecord(&di_record, &temp32);
+
+
     HID_DevSetIncomingQos(p_app_data->in_qos.service_type, p_app_data->in_qos.token_rate,
                           p_app_data->in_qos.token_bucket_size, p_app_data->in_qos.peak_bandwidth,
                           p_app_data->in_qos.access_latency, p_app_data->in_qos.delay_variation);

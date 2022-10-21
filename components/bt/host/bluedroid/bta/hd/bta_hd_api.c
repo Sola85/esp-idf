@@ -114,9 +114,16 @@ extern void BTA_HdRegisterApp(tBTA_HD_APP_INFO *p_app_info, tBTA_HD_QOS_INFO *p_
         p_buf->subclass = p_app_info->subclass;
         p_buf->d_len = p_app_info->descriptor.dl_len;
         memcpy(p_buf->d_data, p_app_info->descriptor.dsc_list, p_app_info->descriptor.dl_len);
+
+        // Adafruit modification by hathach
+        p_buf->vendor_id = p_app_info->vendor_id;
+        p_buf->product_id = p_app_info->product_id;
+        p_buf->version = p_app_info->version;
+
         // copy qos data as-is
         memcpy(&p_buf->in_qos, p_in_qos, sizeof(tBTA_HD_QOS_INFO));
         memcpy(&p_buf->out_qos, p_out_qos, sizeof(tBTA_HD_QOS_INFO));
+
         bta_sys_sendmsg(p_buf);
     }
 }

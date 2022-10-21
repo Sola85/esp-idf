@@ -77,6 +77,11 @@ typedef struct {
     uint8_t d_data[BTA_HD_APP_DESCRIPTOR_LEN];
     tBTA_HD_QOS_INFO in_qos;
     tBTA_HD_QOS_INFO out_qos;
+
+    // Adafruit modification by hathach
+    uint16_t vendor_id;
+    uint16_t product_id;
+    uint16_t version;
 } tBTA_HD_REGISTER_APP;
 
 #define BTA_HD_REPORT_LEN HID_DEV_MTU_SIZE
