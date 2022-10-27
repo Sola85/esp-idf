@@ -508,6 +508,7 @@
 #endif
 
 #ifndef BT_TRACE_VERBOSE
+// #define BT_TRACE_VERBOSE  TRUE
 #define BT_TRACE_VERBOSE  FALSE
 #endif
 

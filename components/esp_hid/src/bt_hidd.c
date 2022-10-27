@@ -136,6 +136,8 @@ static esp_err_t bt_hidd_init_config(esp_bt_hidd_dev_t *dev, const esp_hid_devic
                 free(rmap);
                 return ESP_ERR_NO_MEM;
             }
+
+            // ESP_LOGE(TAG, "rmap->reports_len = %u", rmap->reports_len);
             for (uint8_t r = 0; r < rmap->reports_len; r++) {
                 dev->devices[d].reports[r].map_index = d;
                 dev->devices[d].reports[r].report_id = rmap->reports[r].report_id;
@@ -143,6 +145,10 @@ static esp_err_t bt_hidd_init_config(esp_bt_hidd_dev_t *dev, const esp_hid_devic
                 dev->devices[d].reports[r].report_type = rmap->reports[r].report_type;
                 dev->devices[d].reports[r].usage = rmap->reports[r].usage;
                 dev->devices[d].reports[r].value_len = rmap->reports[r].value_len;
+
+                // hidd_report_item_t* item = &dev->devices[d].reports[r];
+                // ESP_LOGE(TAG, "reports[%u]: id = %u, protocol_mode = %u, type = %u, usage = %u, value_len = %u",
+                //         r, item->report_id, item->protocol_mode, item->report_type, item->usage, item->value_len);
             }
             free(rmap->reports);
             free(rmap);
@@ -610,7 +616,7 @@ void bt_hidd_cb(esp_hidd_cb_event_t event, esp_hidd_cb_param_t *param)
                      param->open.bd_addr[2], param->open.bd_addr[3], param->open.bd_addr[4], param->open.bd_addr[5]);
             osi_mutex_lock(&s_hidd_param.mutex, OSI_MUTEX_MAX_TIMEOUT);
             s_hidd_param.dev->connected = true;
-            s_hidd_param.dev->protocol_mode = false; // hathach: default to report each connection
+            s_hidd_param.dev->protocol_mode = 0x01; // hathach: default to report each connection
             memcpy(s_hidd_param.dev->remote_bda, param->open.bd_addr, ESP_BD_ADDR_LEN);
             osi_mutex_unlock(&s_hidd_param.mutex);
         } else {
@@ -651,6 +657,7 @@ void bt_hidd_cb(esp_hidd_cb_event_t event, esp_hidd_cb_param_t *param)
                                           &map_index);
         if (p_rpt == NULL) {
             ESP_LOGE(TAG, "Can not find report!");
+            ESP_LOGE(TAG, "ESP_HIDD_GET_REPORT_EVT: report id = %u, type = %u", param->get_report.report_id, param->get_report.report_type);
             esp_bt_hid_device_report_error(ESP_HID_PAR_HANDSHAKE_RSP_ERR_INVALID_REP_ID);
             break;
         }
@@ -692,6 +699,7 @@ void bt_hidd_cb(esp_hidd_cb_event_t event, esp_hidd_cb_param_t *param)
                                           &map_index);
         if (p_rpt == NULL) {
             ESP_LOGE(TAG, "Can not find report!");
+            ESP_LOGE(TAG, "ESP_HIDD_SET_REPORT_EVT report id = %u, type = %u", param->set_report.report_id, param->set_report.report_type);
             esp_bt_hid_device_report_error(ESP_HID_PAR_HANDSHAKE_RSP_ERR_INVALID_REP_ID);
             break;
         }
@@ -752,6 +760,13 @@ void bt_hidd_cb(esp_hidd_cb_event_t event, esp_hidd_cb_param_t *param)
                                           &map_index);
         if (p_rpt == NULL) {
             ESP_LOGE(TAG, "Can not find report!");
+            ESP_LOGE(TAG, "ESP_HIDD_INTR_DATA_EVT report id = %u, report = %u, protocol = %u",
+                     param->intr_data.report_id, ESP_HID_REPORT_TYPE_OUTPUT, s_hidd_param.dev->protocol_mode);
+            /* for(uint32_t i=0; i<param->intr_data.len; i++)
+            {
+              printf("%02X ", param->intr_data.data[i]);
+            }
+            printf("\n"); */
             break;
         }
 
