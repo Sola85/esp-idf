@@ -219,6 +219,7 @@ tHID_STATUS HID_DevAddRecord(uint32_t handle, char *p_name, char *p_description,
 
     HIDD_TRACE_API("%s", __func__);
     HIDD_TRACE_API("desc_len = %d, p_desc_data = %02x %02X %02X %02X", desc_len, p_desc_data[0], p_desc_data[1], p_desc_data[2], p_desc_data[3]);
+    HIDD_TRACE_API("subclass = 0x%02X, name = %s, description = %s, provider = %s", subclass, p_name, p_description, p_provider);
 
     // Service Class ID List
     if (result) {
